@@ -549,9 +549,9 @@ static void GuiRequest( struct netconn *conn ) {
 					  outdata.AnalogInput[7] = (uint16_t) ReadADC(FB_SPARE_IN2);
 
 					  outdata.AnalogInput[0] = rxdata1 = (uint16_t) ReadADC(FB_CURRENT);
-					  outdata.AnalogInput[1] = rxdata2 = (uint16_t) ReadADC(FB_GAS_MFC);
+					  outdata.AnalogInput[1] = (uint16_t) ReadADC(FB_GAS_MFC);
 					  outdata.AnalogInput[2] = (uint16_t) ReadADC(FB_SETPOT);
-					  outdata.AnalogInput[3] = (uint16_t) ReadADC(FB_PS_VOLTAGE);
+					  outdata.AnalogInput[3] = rxdata2 = (uint16_t) ReadADC(FB_PS_VOLTAGE);
 
 					  //for(BYTE s = 1; s < stInitWeldSched.uNumberOfServos; s ++)
 					  for(BYTE s = 1; s < 5; s ++)
@@ -979,7 +979,7 @@ static void DynData(struct netconn *conn)
 
   strcat((char *)PAGE_BODY, "<table><tr><td>");
   strcat((char *)PAGE_BODY, "<div id='txtSpeed' style='visibitity:hidden'>");
-  sprintf(pagehits, "%d </div> %d </br> %d </br> %d </br>", (int)rxdata1, (int)mLastLevel, (int)mNumberOfLevels, (int)mNumServos);
+  sprintf(pagehits, "%d </div> %d </br> %d </br> %d </br> %d </br>", (int)rxdata1, (int)rxdata2, (int)mLastLevel, (int)mNumberOfLevels, (int)mNumServos);
   strcat(PAGE_BODY, pagehits);
   sprintf(pagehits, "<br/>Prepurge: %d", (int)stInitWeldSched.stOneLevel.wPrepurge);
   strcat(PAGE_BODY, pagehits);
