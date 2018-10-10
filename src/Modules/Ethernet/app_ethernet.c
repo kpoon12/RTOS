@@ -62,6 +62,11 @@ extern IW_INITWELD		stInitWeldSched;
 extern BOOL				_isAppLoaded;
 uint16_t ao  = 0x800;
 extern uint16_t IO_DigitalOutput;
+extern uint16_t CMD[5];
+extern uint16_t TACH[5];
+extern uint32_t APOS[5];
+
+extern uint16_t CMD[5];
 extern DWORD IO_DigitalInput(void);
 extern void IO_DigitalUpdate(uint32_t wSetbit);
 extern void ProcessMessage(LPBYTE pInbound, WORD wBytesReceived);
@@ -525,12 +530,13 @@ static void GuiRequest( struct netconn *conn ) {
 						  ao = 0x0;
 					  outdata.TIME0[0]++;
 
+/*
+					  outdata.DigitalInput = _wDigitalInput;
+					  outdata.DigitalOutput = IO_DigitalOutput;
+*/
 
-					  outdata.DigitalInput = IO_DigitalInput();//_wDigitalInput;//
-
-					  //outdata.DigitalOutput = netconn_err(conn);
+ 					  outdata.DigitalInput = IO_DigitalInput();
 					  IO_DigitalUpdate(outdata.DigitalOutput);
-
 
  					  WriteDacData(PA_AMP_COMMAND,  0x800 + (outdata.AnalogOutput[0] * 20));
 					  WriteDacData(PA_GAS_MFC_CMD,  0x800 + (outdata.AnalogOutput[1] * 20));
@@ -542,21 +548,19 @@ static void GuiRequest( struct netconn *conn ) {
 					  WriteDacData(PA_EXTERNAL_TVL_CMD, 0x800 + (outdata.AnalogOutput[6] * 20));
 					  WriteDacData(PA_EXTERNAL_WIRE_CMD, 0x800 + (outdata.AnalogOutput[7] * 20));
 
+					  outdata.AnalogInput[4] = (uint16_t) GetFeedbackADIO(FB_FOOTCONTROL);
+					  outdata.AnalogInput[5] = (uint16_t) GetFeedbackADIO(FB_EXT_STEERING_IN);
+					  outdata.AnalogInput[6] = (uint16_t) GetFeedbackADIO(FB_SPARE_IN1);
+					  outdata.AnalogInput[7] = (uint16_t) GetFeedbackADIO(FB_SPARE_IN2);
 
-					  outdata.AnalogInput[4] = (uint16_t) ReadADC(FB_FOOTCONTROL);
-					  outdata.AnalogInput[5] = (uint16_t) ReadADC(FB_EXT_STEERING_IN);
-					  outdata.AnalogInput[6] = (uint16_t) ReadADC(FB_SPARE_IN1);
-					  outdata.AnalogInput[7] = (uint16_t) ReadADC(FB_SPARE_IN2);
-
-					  outdata.AnalogInput[0] = rxdata1 = (uint16_t) ReadADC(FB_CURRENT);
-					  outdata.AnalogInput[1] = (uint16_t) ReadADC(FB_GAS_MFC);
-					  outdata.AnalogInput[2] = (uint16_t) ReadADC(FB_SETPOT);
-					  outdata.AnalogInput[3] = rxdata2 = (uint16_t) ReadADC(FB_PS_VOLTAGE);
+					  outdata.AnalogInput[0] = rxdata1 = (uint16_t) GetFeedbackADIO(FB_CURRENT);
+					  outdata.AnalogInput[1] = (uint16_t) GetFeedbackADIO(FB_GAS_MFC);
+					  outdata.AnalogInput[2] = (uint16_t) GetFeedbackADIO(FB_SETPOT);
+					  outdata.AnalogInput[3] = rxdata2 = (uint16_t) GetFeedbackADIO(FB_PS_VOLTAGE);
 
 					  //for(BYTE s = 1; s < stInitWeldSched.uNumberOfServos; s ++)
 					  for(BYTE s = 1; s < 5; s ++)
 					  {
-
 						  if(outdata.CMD[s-1] == 0)
 						  {
 							TechSendCMD(s, CMDAxisoff);
@@ -565,13 +569,27 @@ static void GuiRequest( struct netconn *conn ) {
 						  {
 							TechSendCMD(s, CMDAxison);
 						  }
-						  TechWriteCommand(s, SetCommand, outdata.CMD[s-1]);
-						  outdata.TACH[s-1]  = (uint16_t) TechReadFeedback(s, GET_TACH);
-						  outdata.CMD[s-1] = (uint16_t) TechReadFeedback(s, GET_COMMAND);
+						  if(s == 4)//OSC
+						  {
+							  TechWriteCommand(s, SetCommand, (outdata.CMD[s-1]+4000)*40);
+						  }
+						  else
+						  {
+							  TechWriteCommand(s, SetCommand, outdata.CMD[s-1]*40);
+						  }
+
+						  outdata.CMD[s-1] = CMD[s-1];
+						  outdata.TACH[s-1]  = TACH[s-1];
+						  outdata.APOS[s-1] = APOS[s-1];
+
+
+
+						  //outdata.TACH[s-1]  = (uint16_t) TechReadFeedback(s, GET_TACH);
+						  //outdata.CMD[s-1] = (uint16_t) TechReadFeedback(s, GET_COMMAND);
 						  //outdata.AD2[s-1]  = (uint16_t) TechReadFeedback(s, GET_AD2);
 						  //outdata.AD5[s-1]  = (uint16_t) TechReadFeedback(s, GET_LIMITSW);
 						  //outdata.AD5[s-1] = (uint16_t) TechReadFeedback(s, GET_AD5);
-						  outdata.APOS[s-1] = (uint32_t) TechReadLongFeedback(s, GET_APOS);
+						  //outdata.APOS[s-1] = (uint32_t) TechReadLongFeedback(s, GET_APOS);
 						  //outdata.TIME0[s-1] = (uint32_t) TechReadLongFeedback(s, GET_TIME0);
 					  }
 

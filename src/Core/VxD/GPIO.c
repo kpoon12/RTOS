@@ -15,6 +15,9 @@ void GPIO_LowLevel_Init(void);
 
 /* Public variables ----------------------------------------------------------*/
 volatile DWORD _wDigitalInput;
+volatile uint16_t CMD[5];
+volatile uint16_t TACH[5];
+volatile uint32_t APOS[5];
 
 void Init_GPIO(void)
 {
@@ -203,10 +206,18 @@ DWORD IO_DigitalInput(void)
 	// Servo 4 Limit Switch 1											 << 23
 	// Servo 4 Limit Switch 2											 << 24
 
-	for (uint8_t nAxis = 1; nAxis < 0; ++nAxis)
+	for (uint8_t nAxis = 1; nAxis < 5; ++nAxis)
 	{
 		isActive = (TechReadFeedback(nAxis, GET_LIMITSW) & 0x000C) >> 2;
 		DigitalInput += isActive << (14 + (nAxis *2));
+		  TACH[nAxis-1]  = (uint16_t) TechReadFeedback(nAxis, GET_TACH);
+		  CMD[nAxis-1] = (uint16_t) TechReadFeedback(nAxis, GET_COMMAND);
+		  APOS[nAxis-1] = (uint32_t) TechReadLongFeedback(nAxis, GET_APOS);
+		  //outdata.AD2[nAxis-1]  = (uint16_t) TechReadFeedback(s, GET_AD2);
+		  //outdata.AD5[nAxis-1]  = (uint16_t) TechReadFeedback(s, GET_LIMITSW);
+		  //outdata.AD5[nAxis-1] = (uint16_t) TechReadFeedback(s, GET_AD5);
+		  //outdata.TIME0[nAxis-1] = (uint32_t) TechReadLongFeedback(s, GET_TIME0);
+
 	}
 
 	return DigitalInput;

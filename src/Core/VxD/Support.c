@@ -760,7 +760,7 @@ void SetCommandDacValue(short nValue, const SERVO_VALUES* ss)
 			{
 				pServoCommand->nCommandPort = nValue;
 				//ServoCmd(pServoCommand);
-				WriteDacData(PA_AMP_COMMAND, nValue);
+				WriteDacData(PA_CURRENT_CMD_HIGH, nValue);
 			}
 			break;
 
@@ -1591,8 +1591,8 @@ void ResetAllControlPorts(BOOL bAllPorts)
 	}
 	else
 	{
-		DriveCommandBit(FAN12, __TRUE);
-		DriveCommandBit(FAN56, __TRUE);
+		//DriveCommandBit(FAN12, __TRUE);
+		//DriveCommandBit(FAN56, __TRUE);
 	}
 
 	DriveCommandBit(WIRE_SELECT,	__FALSE);
@@ -2145,7 +2145,13 @@ void ResetAllFaults(void)
 WORD GetFeedbackADIO(BYTE uChannel)
 {
 	WORD wAnalogFeedback = 0;
-	wAnalogFeedback = ReadADC(uChannel);
+	WORD wTempFeedback = 0;
+	for(int i = 0; i < 10; i++)
+	{
+		wTempFeedback += ReadADC(uChannel);
+	}
+	wAnalogFeedback = wTempFeedback/10;
+
 	return wAnalogFeedback;
 }
 

@@ -129,11 +129,11 @@ static void InitDacOutputRangeReg(DAC_DEVICE *pDacDevice, BYTE uChannel)
 					SetDacOutputRangeReg(pDacDevice, uChannel,   PLUSMINUS_10VOLT);		 
 					break;
 			}*/
-			SetDacOutputRangeReg(pDacDevice, CHANNEL_ALL, PLUSMINUS_10VOLT);
+			SetDacOutputRangeReg(pDacDevice, CHANNEL_ALL, PLUSMINUS_5VOLT);
 			break;	
 
 		case CURRENT_SERVO_DAC: // PA_AMP_COMMAND
-			SetDacOutputRangeReg(pDacDevice, CHANNEL_ALL, PLUSMINUS_10VOLT);
+			SetDacOutputRangeReg(pDacDevice, CHANNEL_ALL, PLUSMINUS_5VOLT);
 			break;
 	}
 }

@@ -135,14 +135,10 @@ void InitAdcControlRegister(ADC_DEVICE *pDevice)
 
 void InitAdcRangeRegister(ADC_DEVICE *pDevice)
 {
-	SetAdcRangeRegister(pDevice, CHANNEL_0, MINUSPLUS_10V);
-	SetAdcRangeRegister(pDevice, CHANNEL_1, MINUSPLUS_10V);
-
-	if (CURRENT_SERVO_ADC == pDevice->uDevice)
-	{
-		SetAdcRangeRegister(pDevice, CHANNEL_2, MINUSPLUS_10V);
-		SetAdcRangeRegister(pDevice, CHANNEL_3, MINUSPLUS_10V);
-	}
+	SetAdcRangeRegister(pDevice, CHANNEL_0, MINUSPLUS_5V);
+	SetAdcRangeRegister(pDevice, CHANNEL_1, MINUSPLUS_5V);
+	SetAdcRangeRegister(pDevice, CHANNEL_2, MINUSPLUS_5V);
+	SetAdcRangeRegister(pDevice, CHANNEL_3, MINUSPLUS_5V);
 }
 
 void InitAdcSeqRegister(ADC_DEVICE *pDevice)

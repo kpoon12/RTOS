@@ -106,9 +106,9 @@ static BOOL uStoppedOnFault = __FALSE;
 static int	nManipFaultCount = 0;
 static char	uManipSpeed;
 
-//static int  nOscSpeedSteer = 10;  // OSC Speed Multiplier
-//static WORD wSteeringWasPosition = 0;
-//static WORD wSteeringIsPosition  = 0;
+static int  nOscSpeedSteer = 10;  // OSC Speed Multiplier
+static WORD wSteeringWasPosition = 0;
+static WORD wSteeringIsPosition  = 0;
 
 // Global function prototyps
 void fnColdShutdown(void);
@@ -5033,7 +5033,7 @@ void fnHandler(void)
 	ReadBarGraphData();
 	// ReadAcMainsData();
 	// HandlePendant();
-	// fnProcessOscSteerCommands();
+	fnProcessOscSteerCommands();
 	DriveCommandBit(GAS_SOLE_ENA2, __TRUE);
 	if (bWeldSequence)
 	{
@@ -5042,7 +5042,7 @@ void fnHandler(void)
 
 	GndFaultCheck();
 	CheckServoInit();
-	DelayedFanOn();
+	//DelayedFanOn();
 	CheckLampTimer();
 
 	// Multiple Servo functions
@@ -5123,9 +5123,8 @@ void fnProcessExtOscSteer(void)
 		}
 	}
 }
-*/
 
-/*
+
 int GetEncoderMove(void)
 {
 	int nMoveIncrement;
@@ -5178,7 +5177,7 @@ int fnGetSteerMovement(void)
 
 	return nMoveIncrement;
 }
-
+*/
 
 void fnProcessOscSteerEncoder(void)
 {
@@ -5186,7 +5185,7 @@ void fnProcessOscSteerEncoder(void)
 	BYTE uServo;
 	int  nMoveIncrement;
 
-	nMoveIncrement = fnGetSteerMovement();
+	//nMoveIncrement = GetEncoderData();
 	for (uServo = 0; uServo < mNumServos; ++uServo) 
 	{
 		ss = &ServoStruct[uServo]; // Save pointer to this servos struct
@@ -5218,7 +5217,7 @@ void fnProcessOscSteerCommands(void)
 	fnProcessOscSteerEncoder();
 //	fnProcessExtOscSteer();
 }
-*/
+
 
 static BOOL HandleServoFault(BYTE uFaultMsg)
 {
